@@ -17,12 +17,10 @@ let App = () => {
 
   return (
     <React.Fragment>
-      <Provider store={store}>
         <Table />
         <Buttons toggleShowModal={toggleShowModal}/>
         <Table type='stats' />
         <ModalWindow modalState={modalState} toggleShowModal={toggleShowModal} />
-      </Provider>
     </React.Fragment>
   );
 }
