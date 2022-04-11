@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
 import '../styles/ModalWindow.css';
 import categories from '../scripts/categories';
-import { getData, setData } from '../scripts/modalWindowFormData';
+//import { getData, setData } from '../scripts/modalWindowFormData';
+import actionModalWindowVisibility from '../actions/actionModalWindowVisibility';
 
 let options = categories.map((el, i) => <option key={'option-' + i} value={i}>{el}</option>);
 
@@ -9,11 +12,14 @@ type functionType = () => void;
 type eventType = React.FormEvent<EventTarget>;
 
 let ModalWindow:React.FC<{modalState:boolean, toggleShowModal:functionType}> = ({modalState, toggleShowModal}) => {
+
+    let stateModalWindow = useSelector((state: RootState ) => state.modalWindowVisiblity);
+    let dispatch = useDispatch<AppDispatch>();
     
-    let classStr:string = modalState ? '' : 'hidden';
-    
+    let classStr:string = stateModalWindow ? '' : 'hidden';
+
     let [nameEmpty, setNameEmpty] = useState(false);
-    
+
     interface formDataObject {
         name: string;
         category: number;
@@ -30,28 +36,26 @@ let ModalWindow:React.FC<{modalState:boolean, toggleShowModal:functionType}> = (
         let element = e.target as HTMLFormElement;
         let obj:formDataObject = {...formData, [element.name]: element.value,}
         setFormData(obj);
+        setNameEmpty(false);
     }
 
     function close(e: eventType) {
         e.preventDefault();
         setFormData(defaultFormData);
-        toggleShowModal();
+        //toggleShowModal();
+        actionModalWindowVisibility(dispatch, false);
+        setNameEmpty(false);
     }
     function submit(e: eventType) {
         e.preventDefault();
         let { name }: { name:string } = formData;
-        //setData();
         if(!name) {
             setNameEmpty(true);
         }else {
             alert(JSON.stringify(formData));
-            //setData(form);
         }
-        //console.log(getData());
     }
-    function checkNameValue() {
-        if(nameEmpty) setNameEmpty(!nameEmpty);
-    }
+    
     function EmptyNameMessage() {
         return <div style={{color: 'red'}}>* Name can not be empty!</div>
     }
@@ -62,7 +66,7 @@ let ModalWindow:React.FC<{modalState:boolean, toggleShowModal:functionType}> = (
                 <form onSubmit={submit}>
                     <div>
                         <label htmlFor='name'>Name:</label>
-                        <input type='text' id='name' name='name' onChange={change} defaultValue='' onClick={checkNameValue} value={formData.name} placeholder='Enter the name' />
+                        <input type='text' id='name' name='name' onChange={change} value={formData.name} placeholder='Enter the name' />
                     </div>
                     <div>
                         <label>Choose category:</label>

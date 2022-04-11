@@ -1,3 +1,3 @@
-let categories:string[] = ['Idea','Random Thought','Task'];
+let categories:string[] = ['Any','Idea','Random Thought','Task'];
 
 export default categories;
