@@ -25,7 +25,7 @@ let TableRow:React.FC<{dataRow:DataRow|DataRowStats, type?:string}> = ({dataRow,
     for(key in dataRow) {
         let opt = dataRow[key];
         if(key !== 'id') {
-            tagDiv.push(<div key={`${opt}${type}-${dataRow.id}`}>{opt}</div>);
+            tagDiv.push(<div key={`${key}${type}-${dataRow.id}`}>{opt}</div>);
         }
     }
 
