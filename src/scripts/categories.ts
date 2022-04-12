@@ -1,8 +1,20 @@
-let categories:string[] = ['Random','Idea','Random Thought','Task'];
+let categories:Array<{name: string, color: string}> = [
+    {name: 'Random', color: ''},
+    {name: 'Idea', color: 'indigo'},
+    {name: 'Random Thought', color: 'rosybrown'},
+    {name: 'Task', color: 'teal'}
+];
 
-let randomCategory = (min: number, max: number) => {
-    let rand = Math.random();
-    return Math.floor(rand * (max - min) + min);
+function getCategoryColor(ind:number) {
+    return categories[ind].color;
+}
+function getCategoryName(ind:number) {
+    return categories[ind].name;
 }
 
-export { categories, randomCategory };
+function randomCategory(min: number, max: number) {
+    //let rand = Math.random();
+    return Math.round(Math.random() * (max - min) + min);
+}
+
+export { categories, randomCategory, getCategoryColor, getCategoryName };

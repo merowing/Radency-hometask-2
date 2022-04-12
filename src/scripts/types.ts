@@ -4,7 +4,7 @@ type AppDispatchType = AppDispatch;
 type RootStateType = RootState;
 type formDataType = {
     name: string;
-    category: number;
+    category: string;
     description: string;
     [key: string]: string | number;
 }

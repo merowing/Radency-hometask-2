@@ -1,6 +1,6 @@
 import { stringify } from 'querystring';
 import React, { ReactElement } from 'react';
-import { categories, randomCategory } from '../scripts/categories';
+import { categories, getCategoryColor, getCategoryName, randomCategory } from '../scripts/categories';
 
 type noteTypes = {
     id: number,
@@ -22,10 +22,12 @@ let TableRow:React.FC<{note: noteTypes | archiveTypes, type?: string}> = ({note,
     
     type = (!type) ? '' : type;
     
-    let firstLetterOfCategory = categories[note.category][0];
+    let firstLetterOfCategory:string = getCategoryName(note.category)[0];
+    let bgColor:string = getCategoryColor(note.category);
+
     tagDiv.push(
         <div key={`image-${type}-${note.id}`}>
-            <div className="image-category">
+            <div style={{backgroundColor: bgColor}} className="image-category">
                 <span>{firstLetterOfCategory}</span>
             </div>
         </div>
@@ -38,7 +40,7 @@ let TableRow:React.FC<{note: noteTypes | archiveTypes, type?: string}> = ({note,
         opt = note[key];
         
         if(key === 'category') {
-            opt = categories[opt];    
+            opt = getCategoryName(opt);
         }
         if(key !== 'id' && (type === 'stats' || key !== 'archived')) {
             tagDiv.push(<div key={`${key}${type}-${note.id}`}>{opt}</div>);

@@ -8,11 +8,11 @@ import { eventType, formDataType, AppDispatchType, RootStateType } from '../scri
 
 let defaultFormData: formDataType = {
     name: '',
-    category: 0,
+    category: '0',
     description: '',
 }
 
-let options = categories.map((el, i) => <option key={'option-' + i} value={i}>{el}</option>);
+let options = categories.map<React.ReactElement>((el, i) => <option key={'option-' + i} value={i}>{el.name}</option>);
 
 function EmptyNameMessage() {
     return <div style={{color: 'red'}}>* Name can not be empty!</div>
@@ -45,14 +45,16 @@ let ModalWindow = () => {
 
     function submit(e: eventType) {
         e.preventDefault();
-        let { name, category }: { name:string, category:number } = formData;
+        let { name, category }: { name:string, category:string } = formData;
+        let newFormData:formDataType = {...formData};
         if(!name) {
             setNameEmpty(true);
         }else {
-            if(category) {
-                formData.category = randomCategory(1, 3);
+            if(category === '0') {
+                newFormData.category = randomCategory(1, 3).toString();
+                //alert(randomCategory(1, 3));
             }
-            alert(JSON.stringify(formData));
+            alert(JSON.stringify(newFormData));
         }
     }
 
