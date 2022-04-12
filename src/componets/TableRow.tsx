@@ -1,48 +1,67 @@
-import React from 'react';
+import { stringify } from 'querystring';
+import React, { ReactElement } from 'react';
+import { categories, randomCategory } from '../scripts/categories';
 
-interface DataRow {
-    name: string,
+type noteTypes = {
     id: number,
-    content: string,
-    dates: string,
     category: number,
-    created: number,
-}
-interface DataRowStats {
-    id: number,
+    description: string,
     name: string,
+    created: number,
+    archived: number,
+}
+type archiveTypes = {
+    id: number,
+    category: number,
     active: number,
     archived: number,
 }
 
-let TableRow:React.FC<{dataRow:DataRow|DataRowStats, type?:string}> = ({dataRow, type}) => {
+let TableRow:React.FC<{note: noteTypes | archiveTypes, type?: string}> = ({note, type}) => {
     let tagDiv:React.ReactElement[] = [];
+    
+    type = (!type) ? '' : type;
+    
+    let firstLetterOfCategory = categories[note.category][0];
+    tagDiv.push(
+        <div key={`image-${type}-${note.id}`}>
+            <div className="image-category">
+                <span>{firstLetterOfCategory}</span>
+            </div>
+        </div>
+    );
 
-    type = (!type) ? '' : '-' + type;
-    tagDiv.push(<div key={`image${type}-${dataRow.id}`}></div>);
+    let key: keyof typeof note;
+    let opt:string|number;
 
-    let key: keyof typeof dataRow;
-    for(key in dataRow) {
-        let opt = dataRow[key];
-        if(key !== 'id') {
-            tagDiv.push(<div key={`${key}${type}-${dataRow.id}`}>{opt}</div>);
+    for(key in note) {
+        opt = note[key];
+        
+        if(key === 'category') {
+            opt = categories[opt];    
+        }
+        if(key !== 'id' && (type === 'stats' || key !== 'archived')) {
+            tagDiv.push(<div key={`${key}${type}-${note.id}`}>{opt}</div>);
         }
     }
+    if(type !== 'stats') {
+        tagDiv.push(<div key={`date-${note.id}`}></div>);
+    // }
 
-    if(!dataRow.hasOwnProperty('active')) {
+    // if(!note.hasOwnProperty('active')) {
         tagDiv.push(
-            <div key={`$buttons-${dataRow.id}`}>
+            <div key={`$buttons-${note.id}`}>
                 <ul>
-                    <li key={`edit-${dataRow.id}`}></li>
-                    <li key={`archive-${dataRow.id}`}></li>
-                    <li key={`remove-${dataRow.id}`}></li>
+                    <li key={`edit-${note.id}`}></li>
+                    <li key={`archive-${note.id}`}></li>
+                    <li key={`remove-${note.id}`}></li>
                 </ul>
             </div>
         )
     }
 
     return (
-        <div className={`table-row`} key={`${dataRow.id}-row`}>
+        <div className={`table-row`} key={`${note.id}-row`}>
             { tagDiv }
         </div>
     )

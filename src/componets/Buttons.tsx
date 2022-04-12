@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import '../styles/Buttons.css';
 import actionModalWindowVisibility from '../actions/actionModalWindowVisibility';
 import { AppDispatch } from '../store';
-type typeFunction = () => void;
+import '../styles/Buttons.css';
 
-let Buttons:React.FC<{toggleShowModal:typeFunction}> = ({toggleShowModal}) => {
+let Buttons = () => {
     
     let dispatch = useDispatch<AppDispatch>();
     function createNote() {

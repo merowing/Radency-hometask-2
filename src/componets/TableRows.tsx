@@ -1,5 +1,7 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import TableRow from './TableRow';
+import { RootStateType } from '../scripts/types';
 
 interface Data {
     id: number,
@@ -53,11 +55,45 @@ let dataStats:DataStats[] = [
 
 let TableRows:React.FC<{type?:string}> = ({type}) => {
     //console.log(type);
+    //let rows:Reac(t.ReactElement[] = [];
+
+    let notesData = useSelector((state: RootStateType) => state.notes);
     let rows:React.ReactElement[] = [];
+
+    type archiveTypes = Array<{
+        id: number,
+        category: number,
+        active: number,
+        archived: number,
+    }>;
+    let archiveData:archiveTypes = [];
+
+
+    notesData.map<void>(item => {
+        let n:number = 0;
+        let index = archiveData.findIndex(elem => elem.category === item.category);
+        if(archiveData.length && index !== -1) {
+            archiveData[index].active += +!item.archived;
+            archiveData[index].archived += +item.archived;
+        }else {
+            archiveData.push({
+                id: ++n,
+                category: item.category,
+                active: +!item.archived,
+                archived: +item.archived
+            });
+        }
+    });
+
+    //console.log(archiveData);
+
     if(type === 'stats') {
-        rows = dataStats.map((el, i) => <TableRow dataRow={el} type={type} key={`table-row-${type}-${i}`} />);
+        //rows = [];
+        rows = archiveData.map<React.ReactElement>((note, ind) => <TableRow note={note} type={type} key={`table-row-${type}-${ind}`} />);
     }else {
-        rows = data.map((el, i) => <TableRow dataRow={el} key={`table-row-${i}`} />);
+        notesData = notesData.filter(note => !note.archived);
+        rows = notesData.map<React.ReactElement>((note, ind) => <TableRow note={note} type={type} key={`table-row-${ind}`}/>);
+    //console.log('rows:' + JSON.stringify(rows[0]));
     }
     return (
         <React.Fragment>

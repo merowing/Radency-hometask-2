@@ -1,40 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store';
 import '../styles/ModalWindow.css';
-import categories from '../scripts/categories';
-//import { getData, setData } from '../scripts/modalWindowFormData';
+
+import { categories, randomCategory } from '../scripts/categories';
 import actionModalWindowVisibility from '../actions/actionModalWindowVisibility';
+import { eventType, formDataType, AppDispatchType, RootStateType } from '../scripts/types';
+
+let defaultFormData: formDataType = {
+    name: '',
+    category: 0,
+    description: '',
+}
 
 let options = categories.map((el, i) => <option key={'option-' + i} value={i}>{el}</option>);
 
-type functionType = () => void;
-type eventType = React.FormEvent<EventTarget>;
+function EmptyNameMessage() {
+    return <div style={{color: 'red'}}>* Name can not be empty!</div>
+}
 
-let ModalWindow:React.FC<{modalState:boolean, toggleShowModal:functionType}> = ({modalState, toggleShowModal}) => {
+let ModalWindow = () => {
 
-    let stateModalWindow = useSelector((state: RootState ) => state.modalWindowVisiblity);
-    let dispatch = useDispatch<AppDispatch>();
+    let stateModalWindow = useSelector((state: RootStateType ) => state.modalWindowVisiblity);
+    let dispatch = useDispatch<AppDispatchType>();
     
     let classStr:string = stateModalWindow ? '' : 'hidden';
 
     let [nameEmpty, setNameEmpty] = useState(false);
-
-    interface formDataObject {
-        name: string;
-        category: number;
-        description: string;
-        [key: string]: string | number;
-    }
-    let defaultFormData: formDataObject = {
-        name: '',
-        category: 0,
-        description: '',
-    }
     let [formData, setFormData] = useState(defaultFormData);
+
     function change(e: eventType) {
         let element = e.target as HTMLFormElement;
-        let obj:formDataObject = {...formData, [element.name]: element.value,}
+        let obj:formDataType = {...formData, [element.name]: element.value,}
         setFormData(obj);
         setNameEmpty(false);
     }
@@ -42,22 +38,22 @@ let ModalWindow:React.FC<{modalState:boolean, toggleShowModal:functionType}> = (
     function close(e: eventType) {
         e.preventDefault();
         setFormData(defaultFormData);
-        //toggleShowModal();
+        
         actionModalWindowVisibility(dispatch, false);
         setNameEmpty(false);
     }
+
     function submit(e: eventType) {
         e.preventDefault();
-        let { name }: { name:string } = formData;
+        let { name, category }: { name:string, category:number } = formData;
         if(!name) {
             setNameEmpty(true);
         }else {
+            if(category) {
+                formData.category = randomCategory(1, 3);
+            }
             alert(JSON.stringify(formData));
         }
-    }
-    
-    function EmptyNameMessage() {
-        return <div style={{color: 'red'}}>* Name can not be empty!</div>
     }
 
     return (

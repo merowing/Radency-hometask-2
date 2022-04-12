@@ -1,8 +1,7 @@
 import React from 'react';
-import { arrayBuffer } from 'stream/consumers';
-import '../styles/Table.css';
 import TableHead from './TableHead';
 import TableRows from './TableRows';
+import '../styles/Table.css';
 
 let Table:React.FC<{type?:string}> = ({type}) => {
     let stats = (type === 'stats') ? 'statistics' : '';
