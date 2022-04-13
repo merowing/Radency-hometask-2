@@ -1,10 +1,12 @@
 import { createStore, combineReducers } from 'redux';
 import noteReducer from './reducers/noteReducer';
 import modalWindowReducer from './reducers/modalWindowReducer';
+import showArchivesReducer from './reducers/showArchivesReducer';
 
 const rootReducer = combineReducers({
     notes: noteReducer,
-    modalWindowVisiblity: modalWindowReducer,
+    modalWindow: modalWindowReducer,
+    showArchives: showArchivesReducer,
 });
 
 const store = createStore(rootReducer);

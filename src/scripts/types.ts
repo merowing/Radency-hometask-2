@@ -2,17 +2,22 @@ import { AppDispatch, RootState } from '../store';
 
 type AppDispatchType = AppDispatch;
 type RootStateType = RootState;
-type formDataType = {
+type modalWindowTypes = {
+    data: formDataTypes;
+    visibility?: boolean;
+}
+type formDataTypes = {
+    id: number | null;
     name: string;
     category: string;
     description: string;
-    [key: string]: string | number;
 }
 type eventType = React.FormEvent<EventTarget>;
 
 export {
     type AppDispatchType,
     type RootStateType,
-    type formDataType,
+    type formDataTypes,
+    type modalWindowTypes,
     type eventType
 };

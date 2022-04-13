@@ -5,11 +5,11 @@ let categories:Array<{name: string, color: string}> = [
     {name: 'Task', color: 'teal'}
 ];
 
-function getCategoryColor(ind:number) {
-    return categories[ind].color;
+function getCategoryColor(ind:string) {
+    return categories[+ind].color;
 }
-function getCategoryName(ind:number) {
-    return categories[ind].name;
+function getCategoryName(ind:string) {
+    return categories[+ind].name;
 }
 
 function randomCategory(min: number, max: number) {

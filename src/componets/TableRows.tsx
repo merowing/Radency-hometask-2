@@ -58,11 +58,12 @@ let TableRows:React.FC<{type?:string}> = ({type}) => {
     //let rows:Reac(t.ReactElement[] = [];
 
     let notesData = useSelector((state: RootStateType) => state.notes);
+    let showArchives = useSelector((state: RootStateType) => state.showArchives);
     let rows:React.ReactElement[] = [];
 
     type archiveTypes = Array<{
         id: number,
-        category: number,
+        category: string,
         active: number,
         archived: number,
     }>;
@@ -91,7 +92,10 @@ let TableRows:React.FC<{type?:string}> = ({type}) => {
         //rows = [];
         rows = archiveData.map<React.ReactElement>((note, ind) => <TableRow note={note} type={type} key={`table-row-${type}-${ind}`} />);
     }else {
-        notesData = notesData.filter(note => !note.archived);
+        console.log(showArchives);
+        if(!showArchives) {
+            notesData = notesData.filter(note => !note.archived);
+        }
         rows = notesData.map<React.ReactElement>((note, ind) => <TableRow note={note} type={type} key={`table-row-${ind}`}/>);
     //console.log('rows:' + JSON.stringify(rows[0]));
     }

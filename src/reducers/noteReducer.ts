@@ -5,7 +5,7 @@ type noteTypes = {
     id: number,
     name: string,
     created: number,
-    category: number,
+    category: string,
     description: string,
     archived: number,
 }
@@ -13,10 +13,17 @@ type noteTypes = {
 const noteReducer = (state:Array<noteTypes> = database, action:any) => {
     switch(action.type) {
         case ADD_NOTE:
-            state = {...state, ...action.payload};
+            state = [...state, action.payload];
             return state;
+            //break;
+            //console.log([...state, action.payload]);
+            //return state;
         default:
             return state;
+            //return state;
+
+        //console.log(state);
+        //return state;
     }
 };
 

@@ -37,6 +37,9 @@
     width: 16%;
     padding: 0 8px;
 }
+.table-row.archived {
+    background-color: lightcoral;
+}
 .statistics .table-row > div {
     width: 30%;
 }

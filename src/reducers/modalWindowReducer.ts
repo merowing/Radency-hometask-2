@@ -1,9 +1,28 @@
-import { MODAL_WINDOW_VISIBILITY } from '../actions/actionTypes';
+import { MODAL_WINDOW_VISIBILITY, SET_MODAL_WINDOW_DATA } from '../actions/actionTypes';
+import { modalWindowTypes } from '../scripts/types';
 
-const modalWindowReducer = (state:boolean = false, action:any) => {
-    if(action.type === MODAL_WINDOW_VISIBILITY) {
-        state = action.payload;
+let defaultModalWindow = {
+    data: {
+        id: null,
+        name: '',
+        category: '0',
+        description: '',
+    },
+    visibility: false
+}
+
+const modalWindowReducer = (state:modalWindowTypes = defaultModalWindow, action:any) => {
+    switch(action.type) {
+        case MODAL_WINDOW_VISIBILITY:
+            state = {...state, visibility: action.payload}
+            break;
+        case SET_MODAL_WINDOW_DATA:
+            state = {...action.payload};
+            break;
+        default:
+            state = state;
     }
+        
     return state;
 };
 
