@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { noteTypes } from "../scripts/types";
-import { ADD_NOTE, EDIT_NOTE } from "./actionTypes";
+import { ADD_NOTE, EDIT_NOTE, TOGGLE_ARCHIVE_STATE_NOTE } from "./actionTypes";
 
 function actionAddNote(dispatch: Dispatch, data: noteTypes) {
     dispatch({
@@ -16,4 +16,11 @@ function actionEditNote(dispatch: Dispatch, data: noteTypes) {
     })
 }
 
-export { actionAddNote, actionEditNote };
+function actionToggleArchiveState(dispatch: Dispatch, id: number | Array<number>) {
+    dispatch({
+        type: TOGGLE_ARCHIVE_STATE_NOTE,
+        payload: id
+    });
+}
+
+export { actionAddNote, actionEditNote, actionToggleArchiveState };

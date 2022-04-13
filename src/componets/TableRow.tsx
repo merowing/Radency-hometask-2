@@ -6,6 +6,7 @@ import actionModalWindowVisibility from '../actions/actionModalWindowVisibility'
 import { categories, getCategoryColor, getCategoryName, randomCategory } from '../scripts/categories';
 import { AppDispatchType, eventType, noteTypes, RootStateType } from '../scripts/types';
 import getDate from '../scripts/getDate';
+import { actionToggleArchiveState } from '../actions/actionNotes';
 
 type archiveTypes = {
     id: number,
@@ -55,7 +56,7 @@ let TableRow:React.FC<{note: noteTypes | archiveTypes, type?: string}> = ({note,
             <div key={`$buttons-${note.id}`}>
                 <ul id={`${note.id}`}>
                     <li key={`edit-${note.id}`} title='edit' onClick={openModalWindow}></li>
-                    <li key={`archive-${note.id}`} title='archive'></li>
+                    <li key={`archive-${note.id}`} title='archive' onClick={noteArchive}></li>
                     <li key={`remove-${note.id}`} title='remove'></li>
                 </ul>
             </div>
@@ -67,8 +68,7 @@ let TableRow:React.FC<{note: noteTypes | archiveTypes, type?: string}> = ({note,
     //let modalWindow2 = useSelector((state: RootStateType ) => state.modalWindow);
 
     function openModalWindow(e: eventType) {
-        let note = e.target as HTMLLIElement;
-        let index: number | string | undefined = note.parentElement?.id;
+        let index = getIndex(e);
         let data = {id: -1, name:'', category:'0', description:''};
         if(index) {
             data = {
@@ -82,6 +82,16 @@ let TableRow:React.FC<{note: noteTypes | archiveTypes, type?: string}> = ({note,
         actionModalWindowData(dispatch, {data});
         //actionModalWindowData(dispatch, index);
         actionModalWindowVisibility(dispatch, true);
+    }
+
+    function noteArchive(e: eventType) {
+        let index = getIndex(e);
+        actionToggleArchiveState(dispatch, index);
+    }
+
+    function getIndex(event: eventType) {
+        let note = event.target as HTMLLIElement;
+        return +note.parentElement!.id;
     }
 
     let archived = (note.archived && type !== 'stats') ? 'archived' : '';
