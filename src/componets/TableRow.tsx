@@ -4,17 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import actionModalWindowData from '../actions/actionModalWindowData';
 import actionModalWindowVisibility from '../actions/actionModalWindowVisibility';
 import { categories, getCategoryColor, getCategoryName, randomCategory } from '../scripts/categories';
-import { AppDispatchType, eventType, RootStateType } from '../scripts/types';
+import { AppDispatchType, eventType, noteTypes, RootStateType } from '../scripts/types';
 import getDate from '../scripts/getDate';
 
-type noteTypes = {
-    id: number,
-    category: string,
-    description: string,
-    name: string,
-    created: number,
-    archived: number,
-}
 type archiveTypes = {
     id: number,
     category: string,

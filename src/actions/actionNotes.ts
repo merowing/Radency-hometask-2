@@ -1,12 +1,19 @@
 import { Dispatch } from "redux";
-import { formDataTypes } from "../scripts/types";
-import { ADD_NOTE } from "./actionTypes";
+import { noteTypes } from "../scripts/types";
+import { ADD_NOTE, EDIT_NOTE } from "./actionTypes";
 
-function actionAddNote(dispatch: Dispatch, data: formDataTypes) {
+function actionAddNote(dispatch: Dispatch, data: noteTypes) {
     dispatch({
         type: ADD_NOTE,
         payload: data,
     })
 }
 
-export default actionAddNote;
+function actionEditNote(dispatch: Dispatch, data: noteTypes) {
+    dispatch({
+        type: EDIT_NOTE,
+        payload: data
+    })
+}
+
+export { actionAddNote, actionEditNote };

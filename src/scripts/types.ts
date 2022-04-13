@@ -2,6 +2,14 @@ import { AppDispatch, RootState } from '../store';
 
 type AppDispatchType = AppDispatch;
 type RootStateType = RootState;
+type noteTypes = {
+    id: any,
+    name: string,
+    created: number,
+    category: string,
+    description: string,
+    archived: number,
+}
 type modalWindowTypes = {
     data: formDataTypes;
     visibility?: boolean;
@@ -19,5 +27,6 @@ export {
     type RootStateType,
     type formDataTypes,
     type modalWindowTypes,
+    type noteTypes,
     type eventType
 };
