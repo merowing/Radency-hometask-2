@@ -10,6 +10,12 @@ type noteTypes = {
     description: string,
     archived: number,
 }
+type archiveTypes = Array<{
+    id: number,
+    category: string,
+    active: number,
+    archived: number,
+}>;
 type modalWindowTypes = {
     data: formDataTypes;
     visibility?: boolean;
@@ -28,5 +34,6 @@ export {
     type formDataTypes,
     type modalWindowTypes,
     type noteTypes,
+    type archiveTypes,
     type eventType
 };

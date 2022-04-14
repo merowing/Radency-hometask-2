@@ -11,7 +11,7 @@ const database = [
     },
     {
         id: newId(),
-        name: 'Note 2',
+        name: 'Note 2 test test test test',
         created: 1649755000107,
         category: '1',
         description: 'Description 2',

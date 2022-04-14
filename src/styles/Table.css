@@ -37,6 +37,10 @@
     width: 16%;
     padding: 0 8px;
 }
+.table-row > div span {
+    display: inline-block;
+    box-sizing: border-box;
+}
 .table-row.archived {
     background-color: lightcoral;
 }

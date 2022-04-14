@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import '../styles/ModalWindow.css';
 
 import { categories, randomCategory } from '../scripts/categories';
-import actionModalWindowVisibility from '../actions/actionModalWindowVisibility';
-import { eventType, formDataTypes, modalWindowTypes, AppDispatchType, RootStateType } from '../scripts/types';
-import actionModalWindowData from '../actions/actionModalWindowData';
-import { actionAddNote, actionEditNote } from '../actions/actionNotes';
+import { eventType, formDataTypes, AppDispatchType, RootStateType } from '../scripts/types';
 import generateId from '../scripts/generateId';
+
+import { actionModalWindowData, actionModalWindowVisibility } from '../actions/actionModalWindow';
+import { actionAddNote, actionEditNote } from '../actions/actionNotes';
 
 let defaultFormData: formDataTypes = {
     id: null,
@@ -21,55 +21,39 @@ let options = categories.map<React.ReactElement>((el, i) => <option key={'option
 function NameEmptyMessage() {
     return <div style={{color: 'red'}}>* Name can not be empty!</div>
 }
-function EditMessage() {
-    return <div style={{color: 'green', fontWeight: 700}}>Saved!</div>
-}
 
 let ModalWindow = () => {
 
     let { data:modalWindowData, visibility: modalWindowVisibility } = useSelector((state: RootStateType ) => state.modalWindow);
-    // let noteData = useSelector((state: RootStateType) => state.notes);
-    // let formDataStore = noteData[modalWindow.] || defaultFormData;
-    // console.log(formDataStore);
-    // let formDataStore: formDataTypes = defaultFormData;
-    // if(modalWindow.index >= 0) {
-    //     formDataStore = { 
-    //         name: noteData[modalWindow.index].name,
-    //         category: noteData[modalWindow.index].category,
-    //         description: noteData[modalWindow.index].description,
-    //     }
-    //     //setFormData(formDataStore);
-    // }
-    //if(modalWindow.index === -1) formDataStore = defaultFormData;
-    //console.log(formDataStore);
 
     let dispatch = useDispatch<AppDispatchType>();
-console.log(modalWindowData);    
     let classStr:string = modalWindowVisibility ? '' : 'hidden';
 
     let [nameEmptyMessage, setNameEmpty] = useState(false);
     let [formData, setFormData] = useState(modalWindowData);
+    
     useEffect(() => {
         setFormData(modalWindowData);
     }, [modalWindowData]);
 
-console.log(formData);
     function change(e: eventType) {
-        //alert();
         let element = e.target as HTMLFormElement;
         let data = {...formData, [element.name]: element.value}
-        //alert(data);
+        
         setFormData(data);
         setNameEmpty(false);
     }
 
     function close(e: eventType) {
         e.preventDefault();
-        //let resetData = {data: {...defaultFormData, id: -1}};
         setFormData(defaultFormData);
 
-        actionModalWindowData(dispatch, {data: {...defaultFormData}});
-        actionModalWindowVisibility(dispatch, false);
+        let data = {
+            data: {...defaultFormData},
+            visibility: false,
+        };
+        actionModalWindowData(dispatch, data);
+        //actionModalWindowVisibility(dispatch, false);
         setNameEmpty(false);
     }
 
@@ -82,7 +66,7 @@ console.log(formData);
             setNameEmpty(true);
         }else {
             let newFormData = {
-                id: modalWindowData.id,
+                id: formData.id,
                 name,
                 created: 0,
                 category,
@@ -94,21 +78,16 @@ console.log(formData);
                 newFormData.category = randomCategory(1, 3).toString();
             }
             
-            //alert(JSON.stringify(newFormData));
-            //actionModalWindowData(dispatch, modalWindow.index);
-            if(!modalWindowData.id) {
+            if(!formData.id) {
                 newFormData.id = generateId();
                 newFormData.created = +new Date();
+
                 actionAddNote(dispatch, newFormData);
             }else {
-                
-                //console.log(newFormData);
                 actionEditNote(dispatch, newFormData);
                 actionModalWindowVisibility(dispatch, false);
             }
             setFormData(defaultFormData);
-            //else alert(modalWindowData.id);
-            //setFormData(defaultFormData);
         }
     }
 
@@ -130,9 +109,8 @@ console.log(formData);
                         <textarea placeholder='Description' name='description' onChange={change} value={formData.description}></textarea>
                     </div>
                     <div>
-                        <button>{(!modalWindowData.id) ? 'Add' : 'Edit'}</button>
+                        <button>{(!formData.id) ? 'Add' : 'Edit'}</button>
                         {(nameEmptyMessage) ? <NameEmptyMessage /> : null}
-                        {/*(editMessage) ? <EditMessage /> : null*/}
                         <button onClick={close}>Close</button>
                     </div>
                 </form>

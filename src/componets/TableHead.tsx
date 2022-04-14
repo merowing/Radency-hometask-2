@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionToggleArchiveState } from '../actions/actionNotes';
+import { actionRemoveAllNotes, actionToggleArchiveState } from '../actions/actionNotes';
 import { AppDispatchType, RootStateType } from '../scripts/types';
 
 let TableHead:React.FC<{type?:string}> = ({type}) => {
@@ -18,7 +18,7 @@ let TableHead:React.FC<{type?:string}> = ({type}) => {
                     <ul className='head-buttons'>
                         <li key='editAll'></li>
                         <li key='archiveAll' onClick={allNotesToArchive}></li>
-                        <li key='deleteAll'></li>
+                        <li key='deleteAll' onClick={removeAllNotes}></li>
                     </ul>
                 </div>
             );
@@ -29,9 +29,16 @@ let TableHead:React.FC<{type?:string}> = ({type}) => {
     let dispatch = useDispatch<AppDispatchType>();
     let notes = useSelector((state: RootStateType) => state.notes);
 
+    let [archiveAllState, setArchiveAllState] = useState(true);
+
     function allNotesToArchive() {
-        let ids = notes.map(note => note.id);
-        actionToggleArchiveState(dispatch, ids);
+        actionToggleArchiveState(dispatch, archiveAllState);
+        setArchiveAllState(!archiveAllState);
+    }
+
+    function removeAllNotes() {
+        actionRemoveAllNotes(dispatch);
+        setArchiveAllState(false);
     }
 
     return (
