@@ -8,13 +8,7 @@ import generateId from '../scripts/generateId';
 
 import { actionModalWindowData, actionModalWindowVisibility } from '../actions/actionModalWindow';
 import { actionAddNote, actionEditNote } from '../actions/actionNotes';
-
-let defaultFormData: formDataTypes = {
-    id: null,
-    name: '',
-    category: '0',
-    description: '',
-}
+import { defaultModalWindow } from '../scripts/defaultState';
 
 let options = categories.map<React.ReactElement>((el, i) => <option key={'option-' + i} value={i}>{el.name}</option>);
 
@@ -46,14 +40,10 @@ let ModalWindow = () => {
 
     function close(e: eventType) {
         e.preventDefault();
-        setFormData(defaultFormData);
+        let defaultData = defaultModalWindow;
 
-        let data = {
-            data: {...defaultFormData},
-            visibility: false,
-        };
-        actionModalWindowData(dispatch, data);
-        //actionModalWindowVisibility(dispatch, false);
+        setFormData(defaultData.data);
+        actionModalWindowData(dispatch, defaultData);
         setNameEmpty(false);
     }
 
@@ -85,9 +75,11 @@ let ModalWindow = () => {
                 actionAddNote(dispatch, newFormData);
             }else {
                 actionEditNote(dispatch, newFormData);
-                actionModalWindowVisibility(dispatch, false);
+                //actionModalWindowVisibility(dispatch, false);
             }
-            setFormData(defaultFormData);
+
+            actionModalWindowData(dispatch, defaultModalWindow);
+            //setFormData(defaultModalWindow.data);
         }
     }
 

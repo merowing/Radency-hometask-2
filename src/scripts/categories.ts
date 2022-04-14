@@ -13,7 +13,6 @@ function getCategoryName(ind:string) {
 }
 
 function randomCategory(min: number, max: number) {
-    //let rand = Math.random();
     return Math.round(Math.random() * (max - min) + min);
 }
 

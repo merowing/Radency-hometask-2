@@ -10,12 +10,16 @@ type noteTypes = {
     description: string,
     archived: number,
 }
-type archiveTypes = Array<{
+type archiveStatisticTypes = {
     id: number,
     category: string,
     active: number,
     archived: number,
-}>;
+
+    created?: string,
+    description?: string,
+    name?: string,
+};
 type modalWindowTypes = {
     data: formDataTypes;
     visibility?: boolean;
@@ -26,6 +30,7 @@ type formDataTypes = {
     category: string;
     description: string;
 }
+
 type eventType = React.FormEvent<EventTarget>;
 
 export {
@@ -34,6 +39,6 @@ export {
     type formDataTypes,
     type modalWindowTypes,
     type noteTypes,
-    type archiveTypes,
+    type archiveStatisticTypes,
     type eventType
 };

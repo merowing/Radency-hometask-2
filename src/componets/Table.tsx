@@ -5,6 +5,7 @@ import '../styles/Table.css';
 
 let Table:React.FC<{type?:string}> = ({type}) => {
     let stats = (type === 'stats') ? 'statistics' : '';
+    
     return (
         <div className={`table ${stats}`}>
             <TableHead type={type}/>
