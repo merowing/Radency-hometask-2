@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { actionRemoveAllNotes, actionToggleArchiveState } from '../actions/actionNotes';
 import { AppDispatchType } from '../scripts/types';
+import * as Icon from 'react-bootstrap-icons'; 
 
 let TableHead:React.FC<{type?:string}> = ({type}) => {
     
@@ -24,6 +25,9 @@ let TableHead:React.FC<{type?:string}> = ({type}) => {
         headNames = ['', 'Name', 'Active', 'Archived'];
     }
 
+    let [archiveIconAll, setArchiveIconAll] = useState(false);
+    let [removeIconAll, setRemoveIconAll] = useState(false);
+
     let name = (!type) ? 'head' : 'statistics-head';
     let items = headNames.map((el, i) => {
         if(i === headNames.length - 1 && el === '') {
@@ -31,8 +35,12 @@ let TableHead:React.FC<{type?:string}> = ({type}) => {
                 <div key={`head-${i}`}>
                     <ul className='head-buttons'>
                         <li key='editAll'></li>
-                        <li key='archiveAll' onClick={allNotesToArchive}></li>
-                        <li key='deleteAll' onClick={removeAllNotes}></li>
+                        <li key='archiveAll' onClick={allNotesToArchive} onMouseOver={() => setArchiveIconAll(true)} onMouseOut={() => setArchiveIconAll(false)}>
+                            {(!archiveIconAll) ? <Icon.Archive/> : <Icon.ArchiveFill/>}
+                        </li>
+                        <li key='deleteAll' onClick={removeAllNotes} onMouseOver={() => setRemoveIconAll(true)} onMouseOut={() => setRemoveIconAll(false)}>
+                            {(!removeIconAll) ? <Icon.Eraser/> : <Icon.EraserFill/>}
+                        </li>
                     </ul>
                 </div>
             );

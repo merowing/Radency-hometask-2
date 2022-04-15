@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionModalWindowData } from '../actions/actionModalWindow';
 import { getCategoryColor, getCategoryName } from '../scripts/categories';
@@ -6,6 +6,7 @@ import { AppDispatchType, eventType, formDataTypes, noteTypes, RootStateType, ar
 import { actionRemoveNote, actionToggleArchiveState } from '../actions/actionNotes';
 import { defaultModalWindow } from '../scripts/defaultState';
 import { datesFromDescription, maxLettersString, getDate } from '../scripts/tableRow';
+import * as Icon from 'react-bootstrap-icons';
 
 let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> = ({note, type}) => {
     let tagDiv:React.ReactElement[] = [];
@@ -40,8 +41,8 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
                 }
             }
         }
-
-    }, [divRef.current?.children, type]);
+        
+    }, [note, type]);
     
     let key: keyof typeof note;
     let opt: string;
@@ -60,6 +61,13 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
             tagDiv.push(<div key={`${key}${type}-${note.id}`}><span>{opt}</span></div>);
         }
     }
+
+    let [editIcon, setEditIcon] = useState(false);
+    let [archiveIcon, setArchiveIcon] = useState(false);
+    let [removeIcon, setRemoveIcon] = useState(false);
+
+    let archived = (note.archived && type !== 'stats') ? 'archived' : '';
+
     if(type !== 'stats') {
         let dateString = datesFromDescription((!note.description) ? '' : note.description);
 
@@ -67,13 +75,28 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
         tagDiv.push(
             <div key={`$buttons-${note.id}`}>
                 <ul id={`${note.id}`}>
-                    <li key={`edit-${note.id}`} title='edit' onClick={noteEdit}></li>
-                    <li key={`archive-${note.id}`} title='archive' onClick={noteArchive}></li>
-                    <li key={`remove-${note.id}`} title='remove' onClick={noteRemove}></li>
+                    <li key={`edit-${note.id}`} title='edit' onClick={noteEdit} onMouseOver={() => setEditIcon(true)} onMouseLeave={() => setEditIcon(false)}>
+                        {(!editIcon) ? <Icon.Pencil/> : <Icon.PencilFill/>}
+                    </li>
+                    <li key={`archive-${note.id}`} title='archive' onClick={noteArchive} onMouseOver={() => setArchiveIcon(true)} onMouseLeave={() => setArchiveIcon(false)}>
+                        {(!archiveIcon && archived === '') ? <Icon.Archive/> : <Icon.ArchiveFill/>}
+                    </li>
+                    <li key={`remove-${note.id}`} title='remove' onClick={noteRemove} onMouseOver={() => setRemoveIcon(true)} onMouseLeave={() => setRemoveIcon(false)}>
+                        {(!removeIcon) ? <Icon.Eraser/> : <Icon.EraserFill/>}
+                    </li>
                 </ul>
             </div>
         )
     }
+
+    document.body.addEventListener('mouseover', function(e) {
+        let elem = (e.target as HTMLElement).tagName;
+        if(elem === 'DIV') {
+            if(editIcon) setEditIcon(false);
+            if(archiveIcon) setArchiveIcon(false);
+            if(removeIcon) setRemoveIcon(false);
+        }
+    });
 
     let dispatch = useDispatch<AppDispatchType>();
     let noteData = useSelector((state: RootStateType) => state.notes);
@@ -82,7 +105,7 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
         let index = getIndex(e);
         let data: formDataTypes = defaultModalWindow.data;
         
-        if(index) {
+        if(index >= 0) {
             let itemIndex = noteData.findIndex(item => item.id === index);
             data = {
                 id: +index,
@@ -103,12 +126,15 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
     }
 
     function getIndex(event: eventType) {
-        let note = event.target as HTMLLIElement;
-        return +note.parentElement!.id;
+        let note = event.target as HTMLElement;
+
+        while(note.tagName !== 'UL') {
+            note = (note.parentElement as HTMLElement);
+        }
+        
+        return +note.id;
     }
 
-    let archived = (note.archived && type !== 'stats') ? 'archived' : '';
-    
     return (
         <div className={`table-row ${archived}`} key={`${note.id}-row`} ref={divRef}>
             { tagDiv }

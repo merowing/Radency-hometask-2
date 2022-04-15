@@ -6,7 +6,7 @@ import { categories, randomCategory } from '../scripts/categories';
 import { eventType, formDataTypes, AppDispatchType, RootStateType } from '../scripts/types';
 import generateId from '../scripts/generateId';
 
-import { actionModalWindowData } from '../actions/actionModalWindow';
+import { actionModalWindowData, actionModalWindowVisibility } from '../actions/actionModalWindow';
 import { actionAddNote, actionEditNote } from '../actions/actionNotes';
 import { defaultModalWindow } from '../scripts/defaultState';
 
@@ -43,7 +43,7 @@ let ModalWindow = () => {
         let defaultData = defaultModalWindow;
 
         setFormData(defaultData.data);
-        actionModalWindowData(dispatch, defaultData);
+        actionModalWindowData(dispatch, {...defaultData});
         setNameEmpty(false);
     }
 
@@ -65,10 +65,10 @@ let ModalWindow = () => {
             };
 
             if(!+category) {
-                newFormData.category = randomCategory(1, 3).toString();
+                newFormData.category = randomCategory(+modalWindowData.category, [1, 3]).toString();
             }
             
-            if(!formData.id) {
+            if(formData.id === null) {
                 newFormData.id = generateId();
                 newFormData.created = +new Date();
 
@@ -78,7 +78,7 @@ let ModalWindow = () => {
             }else {
                 actionEditNote(dispatch, newFormData);
                 actionModalWindowData(dispatch, defaultModalWindow);
-                //actionModalWindowVisibility(dispatch, false);
+                //actionModalWindowVisibility(dispatch, true);
             }
 
             //actionModalWindowData(dispatch, defaultModalWindow);
@@ -104,7 +104,7 @@ let ModalWindow = () => {
                         <textarea placeholder='Description' name='description' onChange={change} value={formData.description}></textarea>
                     </div>
                     <div>
-                        <button>{(!formData.id) ? 'Add' : 'Edit'}</button>
+                        <button>{(formData.id === null) ? 'Add' : 'Edit'}</button>
                         {(nameEmptyMessage) ? <NameEmptyMessage /> : null}
                         <button onClick={close}>Close</button>
                     </div>
