@@ -6,6 +6,13 @@
 .pnp.js
 README.old.md
 flex.html
+package-lock.json
+/src/App.test.tsx
+/src/logo.svg
+/src/react-app-env.dts
+/src/reportWebVitals.ts
+setupTests.ts
+/public
 
 # testing
 /coverage

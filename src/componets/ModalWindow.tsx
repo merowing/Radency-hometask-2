@@ -6,7 +6,7 @@ import { categories, randomCategory } from '../scripts/categories';
 import { eventType, formDataTypes, AppDispatchType, RootStateType } from '../scripts/types';
 import generateId from '../scripts/generateId';
 
-import { actionModalWindowData, actionModalWindowVisibility } from '../actions/actionModalWindow';
+import { actionModalWindowData } from '../actions/actionModalWindow';
 import { actionAddNote, actionEditNote } from '../actions/actionNotes';
 import { defaultModalWindow } from '../scripts/defaultState';
 
@@ -73,12 +73,15 @@ let ModalWindow = () => {
                 newFormData.created = +new Date();
 
                 actionAddNote(dispatch, newFormData);
+                //actionModalWindowData(dispatch, {...defaultModalWindow, visibility: true});
+                setFormData(defaultModalWindow.data);
             }else {
                 actionEditNote(dispatch, newFormData);
+                actionModalWindowData(dispatch, defaultModalWindow);
                 //actionModalWindowVisibility(dispatch, false);
             }
 
-            actionModalWindowData(dispatch, defaultModalWindow);
+            //actionModalWindowData(dispatch, defaultModalWindow);
             //setFormData(defaultModalWindow.data);
         }
     }

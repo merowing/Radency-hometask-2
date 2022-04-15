@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionModalWindowData } from '../actions/actionModalWindow';
 import { getCategoryColor, getCategoryName } from '../scripts/categories';
@@ -23,43 +23,26 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
         </div>
     );
 
-    let [windowWidth, setWindowWidth] = useState(document.body.clientWidth);
-
-    window.addEventListener('resize', () => {
-        setWindowWidth(document.body.clientWidth);
-    }, false);
-
-    let itemTextArr:string[] = [];
-    if(type !== 'stats') {
-        let noteArr: any = {...note};
-        itemTextArr = Object.keys(noteArr).reduce<string[]>((prev, current) => {
-            if(current === 'name' || current === 'description') {
-                prev.push(noteArr[current]);
-                return prev;
-            }
-            return prev;
-        }, []);
-    }
-
     let divRef = useRef<HTMLDivElement>(null);
-    let columnIndexes = [1,4];
 
     useEffect(() => {
         if(divRef.current && type !== 'stats') {
             let noteItems = divRef.current.children;
-
-            columnIndexes.map<void>((id, index) => {
-                let itemText: string = itemTextArr[index];
+            let columnIndexes = [1,4];
+            
+            for(let i = 0; i < columnIndexes.length; i++) {
+                let itemText: any = noteItems[columnIndexes[i]].firstChild?.textContent;
                 if(itemText) {
-                    let element = (noteItems[id].firstChild as HTMLElement);
+                    let element = (noteItems[columnIndexes[i]].firstChild as HTMLElement);
                     
                     element.textContent = itemText;
                     element.textContent = maxLettersString(element, itemText);
                 }
-            });
+            }
         }
-    }, [windowWidth, itemTextArr]);
 
+    }, [divRef.current?.children, type]);
+    
     let key: keyof typeof note;
     let opt: string;
 
@@ -80,17 +63,15 @@ let TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> 
     if(type !== 'stats') {
         let dateString = datesFromDescription((!note.description) ? '' : note.description);
 
+        tagDiv.push(<div key={`date-${note.id}`}>{dateString}</div>);
         tagDiv.push(
-            <React.Fragment>
-                <div key={`date-${note.id}`}>{dateString}</div>
-                <div key={`$buttons-${note.id}`}>
-                    <ul id={`${note.id}`}>
-                        <li key={`edit-${note.id}`} title='edit' onClick={noteEdit}></li>
-                        <li key={`archive-${note.id}`} title='archive' onClick={noteArchive}></li>
-                        <li key={`remove-${note.id}`} title='remove' onClick={noteRemove}></li>
-                    </ul>
-                </div>
-            </React.Fragment>
+            <div key={`$buttons-${note.id}`}>
+                <ul id={`${note.id}`}>
+                    <li key={`edit-${note.id}`} title='edit' onClick={noteEdit}></li>
+                    <li key={`archive-${note.id}`} title='archive' onClick={noteArchive}></li>
+                    <li key={`remove-${note.id}`} title='remove' onClick={noteRemove}></li>
+                </ul>
+            </div>
         )
     }
 
