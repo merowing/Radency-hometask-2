@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 import TableRow from './TableRow';
 import { noteTypes, RootStateType, archiveStatisticTypes } from '../scripts/types';
 
-let TableRows:React.FC<{type?:string}> = ({type}) => {
+const TableRows:React.FC<{type?:string}> = ({type}) => {
 
-    let notesData = useSelector((state: RootStateType) => state.notes);
-    let showArchives = useSelector((state: RootStateType) => state.showArchives);
+    const notesData = useSelector((state: RootStateType) => state.notes);
+    const showArchives = useSelector((state: RootStateType) => state.showArchives);
     
-    let archiveData = notesData.reduce((prev: archiveStatisticTypes[], current) => {
-        let index = prev.findIndex(({ category }) => category === current.category);
+    const archiveData = notesData.reduce((prev: archiveStatisticTypes[], current) => {
+        const index = prev.findIndex(({ category }) => category === current.category);
         if(prev.length && index !== -1) {
             prev[index].active += +!current.archived;
             prev[index].archived += +current.archived;
@@ -28,10 +28,10 @@ let TableRows:React.FC<{type?:string}> = ({type}) => {
     if(type === 'stats') {
         rows = tableRowElements(archiveData);
     }else {
-        if(!showArchives) {
-            notesData = notesData.filter(note => !note.archived);
-        }
         rows = tableRowElements(notesData);
+        if(!showArchives) {
+            rows = tableRowElements(notesData.filter(note => !note.archived));
+        }
     }
 
     function tableRowElements(data: archiveStatisticTypes[] | noteTypes[]) {

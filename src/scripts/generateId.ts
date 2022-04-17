@@ -1,4 +1,4 @@
-let generateId = (id = 0) => () => id++;
-let newId = generateId();
+const generateId = (id = 0) => () => id++;
+const newId = generateId();
 
 export default newId;

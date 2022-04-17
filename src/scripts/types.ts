@@ -9,6 +9,7 @@ type noteTypes = {
     category: string,
     description: string,
     archived: number,
+    [key: string]: string | number,
 }
 type archiveStatisticTypes = {
     id: number,
@@ -19,6 +20,7 @@ type archiveStatisticTypes = {
     created?: string,
     description?: string,
     name?: string,
+    [key: string]: any,
 };
 type modalWindowTypes = {
     data: formDataTypes;

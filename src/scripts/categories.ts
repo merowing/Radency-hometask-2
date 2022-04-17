@@ -1,4 +1,4 @@
-let categories:Array<{name: string, color: string}> = [
+const categories:Array<{name: string, color: string}> = [
     {name: 'Random', color: ''},
     {name: 'Idea', color: 'indigo'},
     {name: 'Random Thought', color: 'rosybrown'},
@@ -13,7 +13,7 @@ function getCategoryName(ind:string) {
 }
 
 function randomCategory(category: number, nums: number[]) {
-    let [min, max] = nums;
+    const [min, max] = nums;
     let random = Math.round(Math.random() * (max - min) + min);
     
     if(random === category) {

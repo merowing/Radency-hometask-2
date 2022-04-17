@@ -2,42 +2,42 @@ import database from '../scripts/database';
 import { ADD_NOTE, EDIT_NOTE, TOGGLE_ARCHIVE_STATE_NOTE, REMOVE_NOTE, REMOVE_ALL_NOTES } from '../actions/actionTypes';
 import { noteTypes } from '../scripts/types';
 
-const noteReducer = (state:Array<noteTypes> = database, action:any) => {
+const noteReducer = (state:noteTypes[] = database, action:any) => {
     let index: number = 0;
+    let newState: noteTypes[] = [...state];
 
     switch(action.type) {
         case ADD_NOTE:
-            state = [...state, action.payload];
-            return state;
+            return [...newState, action.payload];
         case EDIT_NOTE:
-            index = state.findIndex(note => note.id === action.payload.id);
-            let { name, category, description } = action.payload;
-            state[index] = {...state[index], name: name, category: category, description: description};
-            state = [...state];
-            return state;
+            index = newState.findIndex(note => note.id === action.payload.id);
+            const { name, category, description } = action.payload;
+            
+            newState[index] = {...newState[index], name: name, category: category, description: description};
+            return [...newState];
         case REMOVE_NOTE:
-            index = state.findIndex(note => note.id === action.payload);
-            state.splice(index, 1);
-            state = [...state];
-            return state;
+            index = newState.findIndex(note => note.id === action.payload);
+            
+            newState.splice(index, 1);
+            return [...newState];
         case TOGGLE_ARCHIVE_STATE_NOTE:
             index = action.payload;
+            
             if(typeof index === 'number') {
-                index = state.findIndex(note => note.id === index);
-                let archived = +!state[index].archived;
-                state[index] = {...state[index], archived: archived};
-                state = [...state];
+                index = newState.findIndex(note => note.id === index);
+                const archived = +!newState[index].archived;
+                
+                newState[index] = {...newState[index], archived: archived};
+                return [...newState];
             }else {
-                state = state.map(note => {
+                return newState.map(note => {
                     return {...note, archived: +!index};
                 });
             }
-            return state;
         case REMOVE_ALL_NOTES:
-            state = [];
-            return state;
+            return [];
         default:
-            return state;
+            return newState;
     }
 };
 
