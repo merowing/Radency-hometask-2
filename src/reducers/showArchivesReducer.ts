@@ -3,7 +3,7 @@ import { showArchivesButtonDefault } from "../scripts/defaultState";
 
 const showArchivesButtonReducer = (state:boolean = showArchivesButtonDefault, action:any) => {
     if(action.type === TOGGLE_SHOW_ARCHIVES)
-        state = action.payload;
+        return action.payload;
     return state;
 }
 

@@ -4,11 +4,11 @@ import { actionRemoveAllNotes, actionToggleArchiveState } from '../actions/actio
 import { AppDispatchType } from '../scripts/types';
 import * as Icon from 'react-bootstrap-icons'; 
 
-let TableHead:React.FC<{type?:string}> = ({type}) => {
+const TableHead:React.FC<{type?:string}> = ({type}) => {
     
-    let dispatch = useDispatch<AppDispatchType>();
+    const dispatch = useDispatch<AppDispatchType>();
     
-    let [archiveAllState, setArchiveAllState] = useState(true);
+    const [archiveAllState, setArchiveAllState] = useState(true);
 
     function allNotesToArchive() {
         actionToggleArchiveState(dispatch, archiveAllState);
@@ -25,11 +25,11 @@ let TableHead:React.FC<{type?:string}> = ({type}) => {
         headNames = ['', 'Name', 'Active', 'Archived'];
     }
 
-    let [archiveIconAll, setArchiveIconAll] = useState(false);
-    let [removeIconAll, setRemoveIconAll] = useState(false);
+    const [archiveIconAll, setArchiveIconAll] = useState(false);
+    const [removeIconAll, setRemoveIconAll] = useState(false);
 
-    let name = (!type) ? 'head' : 'statistics-head';
-    let items = headNames.map((el, i) => {
+    const name = (!type) ? 'head' : 'statistics-head';
+    const items = headNames.map((el, i) => {
         if(i === headNames.length - 1 && el === '') {
             return (
                 <div key={`head-${i}`}>

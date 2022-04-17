@@ -6,33 +6,33 @@ import { categories, randomCategory } from '../scripts/categories';
 import { eventType, formDataTypes, AppDispatchType, RootStateType } from '../scripts/types';
 import generateId from '../scripts/generateId';
 
-import { actionModalWindowData, actionModalWindowVisibility } from '../actions/actionModalWindow';
+import { actionModalWindowData } from '../actions/actionModalWindow';
 import { actionAddNote, actionEditNote } from '../actions/actionNotes';
 import { defaultModalWindow } from '../scripts/defaultState';
 
-let options = categories.map<React.ReactElement>((el, i) => <option key={'option-' + i} value={i}>{el.name}</option>);
+const options = categories.map<React.ReactElement>((el, i) => <option key={'option-' + i} value={i}>{el.name}</option>);
 
 function NameEmptyMessage() {
     return <div style={{color: 'red'}}>* Name can not be empty!</div>
 }
 
-let ModalWindow = () => {
+const ModalWindow = () => {
 
-    let { data:modalWindowData, visibility: modalWindowVisibility } = useSelector((state: RootStateType ) => state.modalWindow);
+    const { data:modalWindowData, visibility: modalWindowVisibility } = useSelector((state: RootStateType ) => state.modalWindow);
 
-    let dispatch = useDispatch<AppDispatchType>();
-    let classStr:string = modalWindowVisibility ? '' : 'hidden';
+    const dispatch = useDispatch<AppDispatchType>();
+    const classStr:string = modalWindowVisibility ? '' : 'hidden';
 
-    let [nameEmptyMessage, setNameEmpty] = useState(false);
-    let [formData, setFormData] = useState(modalWindowData);
+    const [nameEmptyMessage, setNameEmpty] = useState(false);
+    const [formData, setFormData] = useState(modalWindowData);
     
     useEffect(() => {
         setFormData(modalWindowData);
     }, [modalWindowData]);
 
     function change(e: eventType) {
-        let element = e.target as HTMLFormElement;
-        let data = {...formData, [element.name]: element.value}
+        const element = e.target as HTMLFormElement;
+        const data = {...formData, [element.name]: element.value}
         
         setFormData(data);
         setNameEmpty(false);
@@ -40,7 +40,7 @@ let ModalWindow = () => {
 
     function close(e: eventType) {
         e.preventDefault();
-        let defaultData = defaultModalWindow;
+        const defaultData = defaultModalWindow;
 
         setFormData(defaultData.data);
         actionModalWindowData(dispatch, {...defaultData});
@@ -50,12 +50,12 @@ let ModalWindow = () => {
     function submit(e: eventType) {
         e.preventDefault();
 
-        let { name, category, description }: formDataTypes = formData;
+        const { name, category, description }: formDataTypes = formData;
 
         if(!name) {
             setNameEmpty(true);
         }else {
-            let newFormData = {
+            const newFormData = {
                 id: formData.id,
                 name,
                 created: 0,
@@ -63,7 +63,7 @@ let ModalWindow = () => {
                 description,
                 archived: 0,
             };
-
+            
             if(!+category) {
                 newFormData.category = randomCategory(+modalWindowData.category, [1, 3]).toString();
             }
@@ -73,16 +73,11 @@ let ModalWindow = () => {
                 newFormData.created = +new Date();
 
                 actionAddNote(dispatch, newFormData);
-                //actionModalWindowData(dispatch, {...defaultModalWindow, visibility: true});
                 setFormData(defaultModalWindow.data);
             }else {
                 actionEditNote(dispatch, newFormData);
-                actionModalWindowData(dispatch, defaultModalWindow);
-                //actionModalWindowVisibility(dispatch, true);
             }
-
-            //actionModalWindowData(dispatch, defaultModalWindow);
-            //setFormData(defaultModalWindow.data);
+            actionModalWindowData(dispatch, defaultModalWindow);
         }
     }
 

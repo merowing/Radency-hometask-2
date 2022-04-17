@@ -5,11 +5,9 @@ import { defaultModalWindow } from '../scripts/defaultState';
 const modalWindowReducer = (state:modalWindowTypes = defaultModalWindow, action:any) => {
     switch(action.type) {
         case MODAL_WINDOW_VISIBILITY:
-            state = {...state, visibility: action.payload}
-            return state;
+            return {...state, visibility: action.payload};
         case SET_MODAL_WINDOW_DATA:
-            state = {...action.payload};
-            return state;
+            return {...action.payload};
         default:
             return state;
     }
