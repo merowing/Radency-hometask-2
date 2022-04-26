@@ -1,6 +1,13 @@
 import { Dispatch } from "redux";
-import { noteTypes } from "../scripts/types";
-import { ADD_NOTE, EDIT_NOTE, REMOVE_NOTE, TOGGLE_ARCHIVE_STATE_NOTE, REMOVE_ALL_NOTES } from "./actionTypes";
+import { noteTypes, noteEditTypes } from "../scripts/types";
+import {
+    ADD_NOTE,
+    EDIT_NOTE,
+    REMOVE_NOTE,
+    TOGGLE_ARCHIVE_STATE_NOTE,
+    TOGGLE_ARCHIVE_STATE_ALL_NOTES,
+    REMOVE_ALL_NOTES
+} from "./actionTypes";
 
 function actionAddNote(dispatch: Dispatch, data: noteTypes) {
     dispatch({
@@ -9,17 +16,24 @@ function actionAddNote(dispatch: Dispatch, data: noteTypes) {
     })
 }
 
-function actionEditNote(dispatch: Dispatch, data: noteTypes) {
+function actionEditNote(dispatch: Dispatch, data: noteEditTypes) {
     dispatch({
         type: EDIT_NOTE,
         payload: data
     })
 }
 
-function actionToggleArchiveState(dispatch: Dispatch, id: number | boolean) {
+function actionToggleArchiveState(dispatch: Dispatch, id: number) {
     dispatch({
         type: TOGGLE_ARCHIVE_STATE_NOTE,
         payload: id
+    });
+}
+
+function actionToggleArchiveStateAll(dispatch: Dispatch) {
+    dispatch({
+        type: TOGGLE_ARCHIVE_STATE_ALL_NOTES,
+        payload: null
     });
 }
 
@@ -37,4 +51,4 @@ function actionRemoveAllNotes(dispatch: Dispatch) {
     })
 }
 
-export { actionAddNote, actionEditNote, actionToggleArchiveState, actionRemoveNote, actionRemoveAllNotes };
+export { actionAddNote, actionEditNote, actionToggleArchiveState, actionToggleArchiveStateAll, actionRemoveNote, actionRemoveAllNotes };

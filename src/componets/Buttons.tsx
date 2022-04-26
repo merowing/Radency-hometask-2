@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { actionModalWindowVisibility } from '../actions/actionModalWindow';
+import { actionModalWindowId, actionModalWindowVisibility } from '../actions/actionModalWindow';
 import actionShowArchives from '../actions/actionShowArchives';
 import { RootStateType } from '../scripts/types';
 import { AppDispatch } from '../store';
@@ -11,6 +11,7 @@ const Buttons = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     function createNote() {
+        actionModalWindowId(dispatch, -1);
         actionModalWindowVisibility(dispatch, true);
     }
     function showArchives() {
@@ -19,7 +20,7 @@ const Buttons = () => {
 
     const showArchivesText = (showArchivesVisibility) ? 'Hide archived notes' : 'Show archived notes';
     
-    const notesArchiveState = !notes.length || notes.every(note => note.archived === 0);
+    const notesArchiveState = notes.length === 0 || notes.every((note) => note.archived === 0);
     let showArchivedNotesButton = <button onClick={showArchives}>{showArchivesText}</button>;
     
     if(notesArchiveState) {

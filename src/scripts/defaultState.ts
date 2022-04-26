@@ -1,12 +1,7 @@
 const showArchivesButtonDefault = false;
 
 const defaultModalWindow = {
-    data: {
-        id: null,
-        name: '',
-        category: '0',
-        description: '',
-    },
+    id: -1,
     visibility: false
 }
 

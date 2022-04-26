@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import '../styles/ModalWindow.css';
-
 import { categories, randomCategory } from '../scripts/categories';
 import { eventType, formDataTypes, AppDispatchType, RootStateType } from '../scripts/types';
-import generateId from '../scripts/generateId';
-
-import { actionModalWindowData } from '../actions/actionModalWindow';
+import { actionModalWindowVisibility } from '../actions/actionModalWindow';
 import { actionAddNote, actionEditNote } from '../actions/actionNotes';
-import { defaultModalWindow } from '../scripts/defaultState';
+import generateId from '../scripts/generateId';
+import '../styles/ModalWindow.css';
 
 const options = categories.map<React.ReactElement>((el, i) => <option key={'option-' + i} value={i}>{el.name}</option>);
 
@@ -17,73 +14,85 @@ function NameEmptyMessage() {
 }
 
 const ModalWindow = () => {
-
-    const { data:modalWindowData, visibility: modalWindowVisibility } = useSelector((state: RootStateType ) => state.modalWindow);
+    let defaultData: any = { 
+        id: -1,
+        name: '',
+        category: 0,
+        description: ''
+    };
+    
+    const notesData = useSelector((state: RootStateType) => state.notes);
+    const { id: modalWindowId, visibility: modalWindowVisibility } = useSelector((state: RootStateType ) => state.modalWindow);
 
     const dispatch = useDispatch<AppDispatchType>();
-    const classStr:string = modalWindowVisibility ? '' : 'hidden';
+    const classShow: string = modalWindowVisibility ? '' : 'hidden';
 
-    const [nameEmptyMessage, setNameEmpty] = useState(false);
-    const [formData, setFormData] = useState(modalWindowData);
+    const [nameEmptyMessage, setEmptyMessage] = useState(false);
+    const [formData, setFormData] = useState(defaultData);
     
     useEffect(() => {
-        setFormData(modalWindowData);
-    }, [modalWindowData]);
+        if(modalWindowId === -1) {
+            setFormData(defaultData);
+        }else {
+            setFormData(notesData[modalWindowId]);
+        }
+    }, [modalWindowId]);
 
     function change(e: eventType) {
         const element = e.target as HTMLFormElement;
         const data = {...formData, [element.name]: element.value}
         
         setFormData(data);
-        setNameEmpty(false);
+        setEmptyMessage(false);
     }
 
     function close(e: eventType) {
         e.preventDefault();
-        const defaultData = defaultModalWindow;
 
-        setFormData(defaultData.data);
-        actionModalWindowData(dispatch, {...defaultData});
-        setNameEmpty(false);
+        actionModalWindowVisibility(dispatch, false);
+        setFormData(defaultData);
+        setEmptyMessage(false);
     }
 
     function submit(e: eventType) {
         e.preventDefault();
 
-        const { name, category, description }: formDataTypes = formData;
-
-        if(!name) {
-            setNameEmpty(true);
+        let { name, category, description }: formDataTypes = formData;
+        
+        if(name === '') {
+            setEmptyMessage(true);
         }else {
-            const newFormData = {
-                id: formData.id,
-                name,
-                created: 0,
-                category,
-                description,
-                archived: 0,
-            };
-            
-            if(!+category) {
-                newFormData.category = randomCategory(+modalWindowData.category, [1, 3]).toString();
-            }
-            
-            if(formData.id === null) {
-                newFormData.id = generateId();
-                newFormData.created = +new Date();
 
-                actionAddNote(dispatch, newFormData);
-                setFormData(defaultModalWindow.data);
-            }else {
-                actionEditNote(dispatch, newFormData);
+            if(category === 0) {
+                category = randomCategory(+category, [1, 3]);
             }
-            actionModalWindowData(dispatch, defaultModalWindow);
+
+            if(modalWindowId === -1) {
+                actionAddNote(dispatch, {
+                    id: generateId(),
+                    created: +new Date(),
+                    archived: 0,
+                    name,
+                    category,
+                    description,
+                });
+            }else {
+                actionEditNote(dispatch, {
+                    id: modalWindowId,
+                    name,
+                    category,
+                    description
+                });
+            }
+
+            setFormData(defaultData);
+            actionModalWindowVisibility(dispatch, false);
         }
     }
 
     return (
         <React.Fragment>
-            <div className={`modal-window ${classStr}`}>
+            <div className={`modal-window ${classShow}`}>
                 <form onSubmit={submit}>
                     <div>
                         <label htmlFor='name'>Name:</label>
@@ -99,13 +108,13 @@ const ModalWindow = () => {
                         <textarea placeholder='Description' name='description' onChange={change} value={formData.description}></textarea>
                     </div>
                     <div>
-                        <button>{(formData.id === null) ? 'Add' : 'Edit'}</button>
+                        <button>{(formData.id === -1) ? 'Add' : 'Edit'}</button>
                         {(nameEmptyMessage) ? <NameEmptyMessage /> : null}
                         <button onClick={close}>Close</button>
                     </div>
                 </form>
             </div>
-            <div className={`modal-bg ${classStr}`}></div>
+            <div className={`modal-bg ${classShow}`}></div>
         </React.Fragment>
     );
 };

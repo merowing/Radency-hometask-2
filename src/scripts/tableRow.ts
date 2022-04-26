@@ -3,7 +3,8 @@ function datesFromDescription(desc: string) {
     return dates.join(', ');
 }
 
-function maxLettersString(element: HTMLElement, itemText: string) {
+function maxLettersString(element: HTMLElement) {
+    let itemText = element.innerText;
     element.style.whiteSpace = 'nowrap';
     const divWidth = element.clientWidth;
     element.removeAttribute('style');

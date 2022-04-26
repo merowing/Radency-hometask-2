@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { actionRemoveAllNotes, actionToggleArchiveState } from '../actions/actionNotes';
+import { actionRemoveAllNotes, actionToggleArchiveStateAll } from '../actions/actionNotes';
 import { AppDispatchType } from '../scripts/types';
 import * as Icon from 'react-bootstrap-icons'; 
 
@@ -8,19 +8,15 @@ const TableHead:React.FC<{type?:string}> = ({type}) => {
     
     const dispatch = useDispatch<AppDispatchType>();
     
-    const [archiveAllState, setArchiveAllState] = useState(true);
-
     function allNotesToArchive() {
-        actionToggleArchiveState(dispatch, archiveAllState);
-        setArchiveAllState(!archiveAllState);
+        actionToggleArchiveStateAll(dispatch);
     }
 
     function removeAllNotes() {
         actionRemoveAllNotes(dispatch);
-        setArchiveAllState(false);
     }
 
-    let headNames:string[] = ['', 'Name', 'Created', 'Category', 'Content', 'Dates', ''];
+    let headNames: string[] = ['', 'Name', 'Created', 'Category', 'Content', 'Dates', ''];
     if(type === 'stats') {
         headNames = ['', 'Name', 'Active', 'Archived'];
     }

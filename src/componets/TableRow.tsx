@@ -1,133 +1,82 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionModalWindowData } from '../actions/actionModalWindow';
+import { actionModalWindowId, actionModalWindowVisibility } from '../actions/actionModalWindow';
 import { getCategoryColor, getCategoryName } from '../scripts/categories';
-import { AppDispatchType, eventType, formDataTypes, noteTypes, RootStateType, archiveStatisticTypes } from '../scripts/types';
+import { AppDispatchType, eventType, noteTypes, RootStateType, archiveStatisticTypes } from '../scripts/types';
 import { actionRemoveNote, actionToggleArchiveState } from '../actions/actionNotes';
-import { defaultModalWindow } from '../scripts/defaultState';
 import { datesFromDescription, maxLettersString, getDate } from '../scripts/tableRow';
-import * as Icon from 'react-bootstrap-icons';
+import Icons from './Icon';
 
 const TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}> = ({note, type}) => {
-    
+
     type = (!type) ? '' : type;
+    const archived = (note.archived && type !== 'stats') ? 'archived' : '';
     
     const firstLetterOfCategory:string = getCategoryName(note.category)[0];
     const bgColor:string = getCategoryColor(note.category);
 
-    const archived = (note.archived && type !== 'stats') ? 'archived' : '';
-
-    // buttons
-    const [editIcon, setEditIcon] = useState(false);
-    const [archiveIcon, setArchiveIcon] = useState(false);
-    const [removeIcon, setRemoveIcon] = useState(false);
-
-    const divRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if(divRef.current && type !== 'stats') {
-            const noteItems = divRef.current.children;
-            
-            const elemsTextShort = [
-                noteItems[1].firstChild!,
-                noteItems[4].firstChild!
-            ]
-            
-            const shorTextArr = elemsTextShort.map<string>(element => {
-                const itemText: string | null = element!.textContent;
-                
-                if(itemText) {
-                    return maxLettersString((element as HTMLSpanElement), itemText);
-                }
-                return '';
-            });
-
-            elemsTextShort.map<void>((elem, i) => {
-                elem.textContent = shorTextArr[i];
-                return null;
-            });
-        }
-        
-    }, [note, type]);
-    
-    const tagDiv: React.ReactElement[] = Object.keys(note).map<React.ReactElement>((key: string) => {
-        let opt = note[key];
-
-        if(key === 'id') {
-            return (
-                <div key={`image-${type}-${note.id}`}>
-                    <div style={{backgroundColor: bgColor}} className="image-category">
-                        <span>{firstLetterOfCategory}</span>
-                    </div>
-                </div>
-            )
-        }
-        if(key === 'category') {
-            opt = getCategoryName(note.category);
-        }
-        if(key === 'created') {
-            opt = getDate(+note.created!);
-        }
-        if(key === 'description') {
-            const dateString = datesFromDescription((!note.description) ? '' : note.description);
-            return (
-                <React.Fragment key={`fragment-description-${note.id}`}>
-                    <div key={`${key}-${type}-${note.id}`}><span>{opt}</span></div>
-                    <div key={`date-${note.id}`}>{dateString}</div>
-                </React.Fragment>
-            );
-        }
-
-        if(key !== 'id' && key !== 'description' && (type === 'stats' || key !== 'archived')) {
-            return <div key={`${key}-${type}-${note.id}`}><span>{opt}</span></div>;
-        }
-
-        return (
-            <React.Fragment key={`fragment-buttons-${note.id}`}>
-                <div key={`$buttons-${note.id}`}>
-                    <ul id={`${note.id}`}>
-                        <li key={`edit-${note.id}`} title='edit' onClick={noteEdit} onMouseOver={() => setEditIcon(true)} onMouseLeave={() => setEditIcon(false)}>
-                            {(!editIcon) ? <Icon.Pencil/> : <Icon.PencilFill/>}
-                        </li>
-                        <li key={`archive-${note.id}`} title='archive' onClick={noteArchive} onMouseOver={() => setArchiveIcon(true)} onMouseLeave={() => setArchiveIcon(false)}>
-                            {(!archiveIcon && archived === '') ? <Icon.Archive/> : <Icon.ArchiveFill/>}
-                        </li>
-                        <li key={`remove-${note.id}`} title='remove' onClick={noteRemove} onMouseOver={() => setRemoveIcon(true)} onMouseLeave={() => setRemoveIcon(false)}>
-                            {(!removeIcon) ? <Icon.Eraser/> : <Icon.EraserFill/>}
-                        </li>
-                    </ul>
-                </div>
-            </React.Fragment>
-        )
-    });
-
-    document.body.addEventListener('mouseover', function(e) {
-        const elem = (e.target as HTMLElement).tagName;
-        if(elem === 'DIV') {
-            if(editIcon) setEditIcon(false);
-            if(archiveIcon) setArchiveIcon(false);
-            if(removeIcon) setRemoveIcon(false);
-        }
-    });
-
     const dispatch = useDispatch<AppDispatchType>();
     const noteData = useSelector((state: RootStateType) => state.notes);
 
+    let noteShortName = useRef<HTMLSpanElement>(null);
+    let noteDescription = useRef<HTMLSpanElement>(null);
+    let noteDateString = useRef<HTMLSpanElement>(null);
+    
+    useEffect(() => {
+        
+        if(noteShortName.current) {
+            noteShortName.current.innerText = maxLettersString(noteShortName.current);
+        }
+        if(noteDescription.current) {
+            noteDescription.current.innerText = maxLettersString(noteDescription.current);
+        }
+        if(noteDateString.current) {
+            noteDateString.current.innerText = datesFromDescription(note.description);
+        }        
+        
+    }, [note]);
+    
+    let row: React.ReactElement;
+
+    if(type === '') {
+        row = <React.Fragment>
+            <div key={`image-${type}-${note.id}`}>
+                <div style={{backgroundColor: bgColor}} className="image-category">
+                    <span>{firstLetterOfCategory}</span>
+                </div>
+            </div>
+            <div key={`name-${note.id}`}><span ref={noteShortName}>{note.name}</span></div>
+            <div key={`created-${note.id}`}><span>{getDate(+note.created!)}</span></div>
+            <div key={`category-${note.id}`}><span>{getCategoryName(note.category)}</span></div>
+            <div key={`description-${note.id}`}><span ref={noteDescription}>{note.description}</span></div>
+            <div key={`date-${note.id}`}><span ref={noteDateString}>{datesFromDescription(note.description!)}</span></div>
+            <div key={`$buttons-${note.id}`}>
+                <ul id={`${note.id}`}>
+                    <Icons callback={noteEdit} type="edit" />
+                    <Icons callback={noteArchive} type="archive" />
+                    <Icons callback={noteRemove} type="remove" />
+                </ul>
+            </div>
+        </React.Fragment>;
+    }else {
+        row = <React.Fragment>
+            <div key={`image-${type}-${note.id}`}>
+                <div style={{backgroundColor: bgColor}} className="image-category">
+                    <span>{firstLetterOfCategory}</span>
+                </div>
+            </div>
+            <div key={`name-${type}-${note.id}`}><span>{getCategoryName(note.category)}</span></div>
+            <div key={`active-${type}-${note.id}`}><span>{note.active}</span></div>
+            <div key={`archived-${type}-${note.id}`}><span>{note.archived}</span></div>
+        </React.Fragment>;
+    }
+
     function noteEdit(e: eventType) {
         const index = getIndex(e);
-        let data: formDataTypes = defaultModalWindow.data;
+        const itemIndex = noteData.findIndex(item => item.id === index);
         
-        if(index >= 0) {
-            const itemIndex = noteData.findIndex(item => item.id === index);
-            data = {
-                id: +index,
-                name: noteData[itemIndex].name,
-                category: noteData[itemIndex].category.toString(),
-                description: noteData[itemIndex].description,
-            };
-        }
-        
-        actionModalWindowData(dispatch, {data, visibility: true});
+        actionModalWindowVisibility(dispatch, true);
+        actionModalWindowId(dispatch, itemIndex);
     }
 
     function noteArchive(e: eventType) {
@@ -148,8 +97,8 @@ const TableRow:React.FC<{note: noteTypes | archiveStatisticTypes, type?: string}
     }
 
     return (
-        <div className={`table-row ${archived}`} key={`${note.id}-row`} ref={divRef}>
-            { tagDiv }
+        <div className={`table-row ${archived}`} key={`${note.id}-row`}>
+            { row }
         </div>
     )
 }

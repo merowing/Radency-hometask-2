@@ -7,26 +7,26 @@ const TableRows:React.FC<{type?:string}> = ({type}) => {
 
     const notesData = useSelector((state: RootStateType) => state.notes);
     const showArchives = useSelector((state: RootStateType) => state.showArchives);
-    
-    const archiveData = notesData.reduce((prev: archiveStatisticTypes[], current) => {
-        const index = prev.findIndex(({ category }) => category === current.category);
-        if(prev.length && index !== -1) {
-            prev[index].active += +!current.archived;
-            prev[index].archived += +current.archived;
-        }else {
-            prev.push({
-                id: prev.length,
-                category: current.category,
-                active: +!current.archived,
-                archived: +current.archived
-            });
-        }
-        return prev;
-    }, []);
 
     let rows:React.ReactElement[] = [];
     if(type === 'stats') {
-        rows = tableRowElements(archiveData);
+        const statisticsData = notesData.reduce((prev: archiveStatisticTypes[], current) => {
+            const index = prev.findIndex(({ category }) => category === current.category);
+            if(prev.length && index !== -1) {
+                prev[index].active += +!current.archived;
+                prev[index].archived += +current.archived;
+            }else {
+                prev.push({
+                    id: prev.length,
+                    category: current.category,
+                    active: +!current.archived,
+                    archived: +current.archived
+                });
+            }
+            return prev;
+        }, []);
+
+        rows = tableRowElements(statisticsData);
     }else {
         rows = tableRowElements(notesData);
         if(!showArchives) {
@@ -35,11 +35,7 @@ const TableRows:React.FC<{type?:string}> = ({type}) => {
     }
 
     function tableRowElements(data: archiveStatisticTypes[] | noteTypes[]) {
-        if(notesData.length) {
-            return data.map<React.ReactElement>((note, ind) => <TableRow note={note} type={type} key={`table-row-${ind}`}/>);
-        }else {
-            return [];
-        }
+        return data.map<React.ReactElement>((note, ind) => <TableRow note={note} type={type} key={`table-row-${ind}`}/>);
     }
 
     return (
