@@ -14,6 +14,7 @@ https://dev.to/admantium/structuring-react-components-n6g
 5.	Bonus task: Tables for “List of notes” and “Summary” should use the same table component.
 <br>
 <br>
+
 ### How to run:
 1. git init
 2. git pull https://github.com/merowing/Radency-hometask-2.git
